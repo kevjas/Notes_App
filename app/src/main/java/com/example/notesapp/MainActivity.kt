@@ -6,20 +6,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
-import android.widget.SearchView
-import android.widget.SearchView.OnQueryTextListener
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notesapp.Adapter.NotesAdapter
 import com.example.notesapp.Database.NoteDatabase
 import com.example.notesapp.Models.Note
 import com.example.notesapp.Models.NoteViewModel
 import com.example.notesapp.databinding.ActivityMainBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), NotesAdapter.NoteClickListener {
 
@@ -27,7 +23,6 @@ class MainActivity : AppCompatActivity(), NotesAdapter.NoteClickListener {
     private lateinit var database: NoteDatabase
     lateinit var viewModel: NoteViewModel
     lateinit var adapter: NotesAdapter
-    lateinit var selectedNote: Note
 
     private val updateNote = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
@@ -120,7 +115,6 @@ class MainActivity : AppCompatActivity(), NotesAdapter.NoteClickListener {
         intent.putExtra("current_note",note)
         updateNote.launch(intent)
 
-
     }
 
     override fun onLongItemclick(note: Note, cardView: CardView) {
@@ -128,12 +122,13 @@ class MainActivity : AppCompatActivity(), NotesAdapter.NoteClickListener {
         builder.setTitle("Delete Note")
         builder.setMessage("Are you sure you want to delete this note?")
         builder.setPositiveButton("Delete") { _, _ ->
-            deleteDatabase("")
+
+            viewModel.deleteNote(note)
+
         }
         builder.setNegativeButton("Cancel", null)
         builder.show()
 
-        viewModel.deleteNote(note)
         Toast.makeText(this, "Note deleted", Toast.LENGTH_SHORT).show()
 
 
